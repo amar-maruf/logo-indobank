@@ -25,10 +25,16 @@ All logo components are sourced from Figma designs created by [Hafidz Noor Fauzi
 
 You can directly link to these logos from the repository as a CDN for your projects. Simply reference the appropriate path from this repository in your HTML or CSS files.
 
-There are two services you can use to convert GitHub repository links to CDN links:
+### Finding and Using Logos
 
-- **[JSDelivr](https://www.jsdelivr.com/github)**: Generate links using JSDelivr by pasting the GitHub repository URL to create a CDN link for your assets.
-- **[Statically](https://statically.io/convert/)**: Use Statically to convert GitHub file links into optimized CDN links.
+1. **Search for Logos in GitHub**  
+   If you are looking for a specific logo, you can use the GitHub search bar within this repository to quickly find what you need. Simply type in the name of the logo (e.g., "BNI", "GoPay", "PLN") in the search bar at the top of the repository.
+
+2. **Convert GitHub Links to CDN Links**  
+   Once you have found the logo you need, you can use one of the following tools to convert the GitHub raw link to a CDN link for better performance and caching:
+
+   - **[JSDelivr](https://www.jsdelivr.com/github)**: Paste the GitHub repository URL in JSDelivr to generate a CDN link for your assets.
+   - **[Statically](https://statically.io/convert/)**: Use Statically to convert the raw GitHub file link into an optimized CDN link.
 
 ### Example Usage
 
