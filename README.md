@@ -25,6 +25,11 @@ All logo components are sourced from Figma designs created by [Hafidz Noor Fauzi
 
 You can directly link to these logos from the repository as a CDN for your projects. Simply reference the appropriate path from this repository in your HTML or CSS files.
 
+There are two services you can use to convert GitHub repository links to CDN links:
+
+- **[JSDelivr](https://www.jsdelivr.com/github)**: Generate links using JSDelivr by pasting the GitHub repository URL to create a CDN link for your assets.
+- **[Statically](https://statically.io/convert/)**: Use Statically to convert GitHub file links into optimized CDN links.
+
 ### Example Usage
 
 ```html
