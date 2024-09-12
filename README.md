@@ -25,6 +25,19 @@ All logo components are sourced from Figma designs created by [Hafidz Noor Fauzi
 
 You can directly link to these logos from the repository as a CDN for your projects. Simply reference the appropriate path from this repository in your HTML or CSS files.
 
+### Example Usage
+
+```html
+<!-- For a Payment Channel Logo -->
+<img src="https://raw.githubusercontent.com/Adekabang/indonesia-logo-library/main/Payment%20Channel/E-Wallet/Gopay.png" alt="GoPay Logo" />
+
+<!-- For a Bank Logo -->
+<img src="https://raw.githubusercontent.com/Adekabang/Adekabang/indonesia-logo-library/main/banks/bni.png" alt="BNI Logo" />
+
+<!-- For a Bill Payment Logo -->
+<img src="https://raw.githubusercontent.com/Adekabang/Adekabang/indonesia-logo-library/main/bill-payments/pln.png" alt="PLN Logo" />
+```
+
 ## Credits
 
 All logos are created by [Hafidz Noor Fauzi](https://www.figma.com/@hafidznoorfauzi) and originally published on Figma. This repository only serves as a convenient storage and CDN solution for developers who wish to integrate these logos in their projects.
