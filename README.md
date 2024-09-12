@@ -30,12 +30,15 @@ You can directly link to these logos from the repository as a CDN for your proje
 ```html
 <!-- For a Payment Channel Logo -->
 <img src="https://raw.githubusercontent.com/Adekabang/indonesia-logo-library/main/Payment%20Channel/E-Wallet/Gopay.png" alt="GoPay Logo" />
+<img src="https://cdn.jsdelivr.net/gh/Adekabang/indonesia-logo-library@main/Payment%20Channel/E-Wallet/Gopay.png" alt="GoPay Logo" />
 
 <!-- For a Bank Logo -->
 <img src="https://raw.githubusercontent.com/Adekabang/indonesia-logo-library/main/Bank/Bank%20Logo/BNI.png" alt="BNI Logo" />
+<img src="https://cdn.jsdelivr.net/gh/Adekabang/indonesia-logo-library@main/Bank/Bank%20Logo/BNI.png" alt="BNI Logo" />
 
 <!-- For a Bill Payment Logo -->
 <img src="https://raw.githubusercontent.com/Adekabang/indonesia-logo-library/main/Bill%20Payment/Utilities/PLN.png" alt="PLN Logo" />
+<img src="https://cdn.jsdelivr.net/gh/Adekabang/indonesia-logo-library@main/Bill%20Payment/Utilities/PLN.png" alt="PLN Logo" />
 ```
 
 ## Credits
