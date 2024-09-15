@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indonesia Logo Library Search</title>
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-900 text-white">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-8 text-center">Indonesia Logo Library</h1>
+        
+        <div class="mb-4 flex justify-between items-center">
+            <input type="text" id="search" placeholder="Search logos..." class="w-3/4 p-2 border border-gray-600 rounded bg-gray-700 text-white">
+            <div class="flex items-center">
+                <span class="mr-2">PNG</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="fileTypeSwitch" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-gray-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-gray-600"></div>
+                </label>
+                <span class="ml-2">SVG</span>
+            </div>
+        </div>
+        
+        <div id="categories" class="mb-4 flex flex-wrap">
+            <!-- Category filters will be populated here -->
+        </div>
+        
+        <div id="results" class="space-y-8">
+            <!-- Results will be populated here -->
+        </div>
+    </div>
+
+    <style>
+        .loading-spinner {
+            border: 5px solid #4B5563;
+            border-top: 5px solid #E5E7EB;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script>
+        const GITHUB_API_URL = 'https://api.github.com/repos/Adekabang/indonesia-logo-library/contents';
+        const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/Adekabang/indonesia-logo-library/main';
+        const JSDELIVR_URL = 'https://cdn.jsdelivr.net/gh/Adekabang/indonesia-logo-library@main';
+        const STATICALLY_URL = 'https://cdn.statically.io/gh/Adekabang/indonesia-logo-library@main';
+
+        const categories = [
+            "Bank",
+            "Bill Payment",
+            "Payment Channel"
+        ];
+
+        const subcategories = {
+            "Bank": ["Bank App", "Bank Logo", "Regulatory", "Remittance", "Switching"],
+            "Bill Payment": ["Card Payment", "Donation", "E-Wallet", "Entertainment", "Financing", "Game", "Government", "ISP", "Logistic", "Mobile Telco", "Prepaid Card", "Supermarket", "Transportation", "Utilities"],
+            "Payment Channel": ["Card Payment", "Direct Debit", "E-Wallet", "Financing", "Miscellaneous", "Payment Gateway", "Prepaid Card", "Supermarket"]
+        };
+
+        let allLogos = {};
+        let currentCategory = 'all';
+        let currentSearchTerm = '';
+
+        async function fetchLogos(path) {
+            const cachedData = localStorage.getItem(path);
+            if (cachedData) {
+                return JSON.parse(cachedData);
+            }
+
+            const response = await fetch(`${GITHUB_API_URL}/${path}`);
+            const data = await response.json();
+            localStorage.setItem(path, JSON.stringify(data));
+            return data;
+        }
+
+        async function getAllLogos() {
+            const logos = {};
+
+            for (const category of categories) {
+                logos[category] = {};
+                for (const subcategory of subcategories[category]) {
+                    const path = `${category}/${subcategory}`;
+                    try {
+                        const items = await fetchLogos(path);
+                        logos[category][subcategory] = items.filter(item => 
+                            item.type === 'file' && (item.name.endsWith('.png') || item.name.endsWith('.svg'))
+                        ).map(item => ({
+                            name: item.name.split('.')[0],
+                            path: item.path,
+                            type: item.name.split('.').pop()
+                        }));
+                    } catch (error) {
+                        console.error(`Error fetching logos for ${path}:`, error);
+                    }
+                }
+            }
+
+            return logos;
+        }
+
+        function getImageUrls(path) {
+            const encodedPath = path.split('/').map(encodeURIComponent).join('/');
+            return [
+                `${JSDELIVR_URL}/${encodedPath}`,
+                `${STATICALLY_URL}/${encodedPath}`,
+                `${GITHUB_RAW_URL}/${encodedPath}`
+            ];
+        }
+
+        async function loadImage(urls) {
+            for (const url of urls) {
+                try {
+                    const response = await fetch(url, { method: 'HEAD' });
+                    if (response.ok) {
+                        return url;
+                    }
+                } catch (error) {
+                    console.warn(`Failed to load image from ${url}`, error);
+                }
+            }
+            console.error('All image loading attempts failed');
+            return urls[urls.length - 1]; // Return GitHub URL as a fallback
+        }
+
+        function displayLogos(filteredLogos) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+            const fileType = document.getElementById('fileTypeSwitch').checked ? 'svg' : 'png';
+
+            for (const [category, subcats] of Object.entries(filteredLogos)) {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'mb-6';
+
+                const categoryTitle = document.createElement('h2');
+                categoryTitle.textContent = category;
+                categoryTitle.className = 'text-2xl font-bold mb-4';
+                categoryDiv.appendChild(categoryTitle);
+
+                for (const [subcategory, logos] of Object.entries(subcats)) {
+                    const filteredLogos = logos.filter(logo => logo.type === fileType);
+                    if (filteredLogos.length === 0) continue;
+
+                    const subcategoryDiv = document.createElement('div');
+                    subcategoryDiv.className = 'mb-4';
+
+                    const subcategoryTitle = document.createElement('h3');
+                    subcategoryTitle.textContent = subcategory;
+                    subcategoryTitle.className = 'text-xl font-semibold mb-2';
+                    subcategoryDiv.appendChild(subcategoryTitle);
+
+                    const logosGrid = document.createElement('div');
+                    logosGrid.className = 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4';
+
+                    filteredLogos.forEach(logo => {
+                        const logoDiv = document.createElement('div');
+                        logoDiv.className = 'bg-gray-800 p-4 rounded shadow';
+                        
+                        const imgContainer = document.createElement('div');
+                        imgContainer.className = 'w-full h-40 flex items-center justify-center mb-2 overflow-hidden bg-gray-700';
+
+                        const loadingSpinner = document.createElement('div');
+                        loadingSpinner.className = 'loading-spinner';
+                        imgContainer.appendChild(loadingSpinner);
+
+                        const img = document.createElement('img');
+                        img.alt = `${logo.name} Logo`;
+                        img.className = 'w-full h-full object-contain hidden';
+
+                        const imageUrls = getImageUrls(logo.path);
+                        loadImage(imageUrls).then(url => {
+                            img.src = url;
+                            img.onload = () => {
+                                loadingSpinner.remove();
+                                img.classList.remove('hidden');
+                            };
+                        });
+
+                        imgContainer.appendChild(img);
+                        logoDiv.appendChild(imgContainer);
+
+                        const name = document.createElement('p');
+                        name.textContent = logo.name;
+                        name.className = 'text-center font-semibold mb-2';
+                        logoDiv.appendChild(name);
+
+                        const copyButtons = document.createElement('div');
+                        copyButtons.className = 'flex flex-col space-y-2';
+
+                        ['jsDelivr', 'Statically', 'GitHub'].forEach((cdn, index) => {
+                            const button = document.createElement('button');
+                            button.textContent = `Copy ${cdn} Link`;
+                            button.className = 'text-white bg-gray-800 hover:bg-gray-700 focus:ring-4 focus:ring-gray-600 font-medium rounded-lg text-sm px-5 py-2.5 mb-2';
+                            button.onclick = () => copyToClipboard(imageUrls[index], cdn);
+                            copyButtons.appendChild(button);
+                        });
+
+                        logoDiv.appendChild(copyButtons);
+                        logosGrid.appendChild(logoDiv);
+                    });
+
+                    subcategoryDiv.appendChild(logosGrid);
+                    categoryDiv.appendChild(subcategoryDiv);
+                }
+
+                resultsDiv.appendChild(categoryDiv);
+            }
+        }
+
+        function copyToClipboard(text, cdn) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert(`${cdn} link copied to clipboard!`);
+            }, (err) => {
+                console.error('Could not copy text: ', err);
+            });
+        }
+
+        function createCategoryFilters() {
+            const categoriesDiv = document.getElementById('categories');
+            categoriesDiv.innerHTML = '<button class="text-white bg-gray-800 hover:bg-gray-700 focus:ring-4 focus:ring-gray-600 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2" data-category="all">All</button>';
+            
+            categories.forEach(category => {
+                const button = document.createElement('button');
+                button.textContent = category;
+                button.className = 'text-gray-300 bg-gray-800 border border-gray-600 focus:outline-none hover:bg-gray-700 focus:ring-4 focus:ring-gray-600 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2';
+                button.setAttribute('data-category', category);
+                categoriesDiv.appendChild(button);
+            });
+
+            categoriesDiv.addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON') {
+                    const selectedCategory = e.target.getAttribute('data-category');
+                    updateActiveCategory(selectedCategory);
+                    filterLogos();
+                }
+            });
+        }
+
+        function updateActiveCategory(selectedCategory) {
+            currentCategory = selectedCategory;
+            const buttons = document.querySelectorAll('#categories button');
+            buttons.forEach(button => {
+                if (button.getAttribute('data-category') === selectedCategory) {
+                    button.className = 'text-white bg-gray-800 hover:bg-gray-700 focus:ring-4 focus:ring-gray-600 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2';
+                } else {
+                    button.className = 'text-gray-300 bg-gray-800 border border-gray-600 focus:outline-none hover:bg-gray-700 focus:ring-4 focus:ring-gray-600 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2';
+                }
+            });
+        }
+
+        function filterLogos() {
+            let filteredLogos = JSON.parse(JSON.stringify(allLogos)); // Deep clone allLogos
+            
+            // Apply category filter
+            if (currentCategory !== 'all') {
+                filteredLogos = { [currentCategory]: filteredLogos[currentCategory] };
+            }
+            
+            // Apply search filter
+            if (currentSearchTerm) {
+                for (const category in filteredLogos) {
+                    for (const subcategory in filteredLogos[category]) {
+                        filteredLogos[category][subcategory] = filteredLogos[category][subcategory].filter(logo =>
+                            logo.name.toLowerCase().includes(currentSearchTerm) ||
+                            logo.path.toLowerCase().includes(currentSearchTerm)
+                        );
+                    }
+                    // Remove empty subcategories
+                    for (const subcategory in filteredLogos[category]) {
+                        if (filteredLogos[category][subcategory].length === 0) {
+                            delete filteredLogos[category][subcategory];
+                        }
+                    }
+                    // Remove empty categories
+                    if (Object.keys(filteredLogos[category]).length === 0) {
+                        delete filteredLogos[category];
+                    }
+                }
+            }
+            
+            displayLogos(filteredLogos);
+        }
+
+        function searchLogos() {
+            currentSearchTerm = document.getElementById('search').value.toLowerCase();
+            filterLogos();
+        }
+
+        function resetSearch() {
+            document.getElementById('search').value = '';
+            currentSearchTerm = '';
+            currentCategory = 'all';
+            updateActiveCategory('all');
+            filterLogos();
+        }
+
+        async function initializeLogos() {
+            allLogos = await getAllLogos();
+            createCategoryFilters();
+            filterLogos();
+        }
+
+        document.getElementById('search').addEventListener('input', searchLogos);
+        document.getElementById('fileTypeSwitch').addEventListener('change', filterLogos);
+
+        // Add a reset button
+        const resetButton = document.createElement('button');
+        resetButton.textContent = 'Reset';
+        resetButton.className = 'text-white bg-gray-800 hover:bg-gray-700 focus:ring-4 focus:ring-gray-600 font-medium rounded-lg text-sm px-5 py-2.5 ml-2';
+        resetButton.onclick = resetSearch;
+        document.querySelector('.mb-4.flex').appendChild(resetButton);
+
+        // Initialize the page
+        initializeLogos();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
+</body>
+</html>
