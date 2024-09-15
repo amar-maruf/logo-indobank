@@ -196,7 +196,7 @@
                         ['jsDelivr', 'Statically', 'GitHub'].forEach((cdn, index) => {
                             const button = document.createElement('button');
                             button.textContent = `Copy ${cdn} Link`;
-                            button.className = 'text-white bg-gray-800 hover:bg-gray-700 focus:ring-4 focus:ring-gray-600 font-medium rounded-lg text-sm px-5 py-2.5 mb-2';
+                            button.className = 'text-white bg-gray-900 hover:bg-gray-700 focus:ring-4 focus:ring-gray-600 font-medium rounded-lg text-sm px-5 py-2.5';
                             button.onclick = () => copyToClipboard(imageUrls[index], cdn);
                             copyButtons.appendChild(button);
                         });
@@ -223,7 +223,7 @@
 
         function createCategoryFilters() {
             const categoriesDiv = document.getElementById('categories');
-            categoriesDiv.innerHTML = '<button class="text-white bg-gray-800 hover:bg-gray-700 focus:ring-4 focus:ring-gray-600 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2" data-category="all">All</button>';
+            categoriesDiv.innerHTML = '<button class="text-gray-900 bg-white hover:bg-gray-200 focus:ring-4 focus:ring-gray-600 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2" data-category="all">All</button>';
             
             categories.forEach(category => {
                 const button = document.createElement('button');
@@ -247,7 +247,7 @@
             const buttons = document.querySelectorAll('#categories button');
             buttons.forEach(button => {
                 if (button.getAttribute('data-category') === selectedCategory) {
-                    button.className = 'text-white bg-gray-800 hover:bg-gray-700 focus:ring-4 focus:ring-gray-600 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2';
+                    button.className = 'text-gray-900 bg-white hover:bg-gray-200 focus:ring-4 focus:ring-gray-600 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2';
                 } else {
                     button.className = 'text-gray-300 bg-gray-800 border border-gray-600 focus:outline-none hover:bg-gray-700 focus:ring-4 focus:ring-gray-600 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2';
                 }
